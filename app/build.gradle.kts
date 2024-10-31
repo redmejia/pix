@@ -51,6 +51,29 @@ android {
 
 dependencies {
 
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // ViewModel utilities for Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+
+    // CameraX Camera Core, Camera 2
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+
+    // CameraX Lifecycle
+    implementation(libs.androidx.camera.lifecycle)
+
+    //  CameraX View
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.extensions)
+
+    // ML Kit camerax extension
+    implementation(libs.androidx.camera.mlkit.vision)
+
+    // Jetpack Compose
+    implementation(libs.androidx.navigation.compose)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
