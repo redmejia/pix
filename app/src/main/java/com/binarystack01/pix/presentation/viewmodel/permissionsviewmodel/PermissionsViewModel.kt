@@ -26,7 +26,7 @@ class PermissionsViewModel : ViewModel() {
         return ContextCompat.checkSelfPermission(
             context,
             permission
-        ) == PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_DENIED
     }
 
 }
