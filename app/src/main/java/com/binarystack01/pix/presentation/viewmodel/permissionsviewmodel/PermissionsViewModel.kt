@@ -1,8 +1,10 @@
 package com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel
 
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,13 @@ class PermissionsViewModel : ViewModel() {
             Log.d("PERMISSION", "onPermissionResult: $permission $isGranted")
             _permissionState.value = true
         }
+    }
+
+    fun shouldShowRequestPermission(context: Context, permission: String): Boolean {
+        return !_permissionState.value && !ActivityCompat.shouldShowRequestPermissionRationale(
+            context as Activity,
+            permission
+        )
     }
 
     fun isPermissionGranted(context: Context, permission: String): Boolean {

@@ -1,4 +1,4 @@
-package com.binarystack01.pix.presentation.ui.components.alerts
+package com.binarystack01.pix.presentation.ui.components.permissionactions.alerts
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
