@@ -19,3 +19,5 @@ val BlackPrimary0 = Color(0xFF000000)
 val BlackPrimary40 = Color(0xDF000000)
 val BlackPrimary50 = Color(0xAD000000)
 val BlackPrimary95 = Color(0x61000000)
+
+val WhitePrimary0 = Color(0xFFFFFFFF)
