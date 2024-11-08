@@ -56,6 +56,8 @@ dependencies {
     // ViewModel utilities for Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
+    // Jetpack Navigation Compose
+    implementation(libs.androidx.navigation.compose)
 
     // CameraX Camera Core, Camera 2
     implementation(libs.androidx.camera.core)
@@ -69,10 +71,12 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
 
     // ML Kit camerax extension
-    implementation(libs.androidx.camera.mlkit.vision)
+//    implementation(libs.androidx.camera.mlkit.vision)
 
-    // Jetpack Compose
-    implementation(libs.androidx.navigation.compose)
+    // ML Kit
+//    implementation (libs.text.recognition)
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
