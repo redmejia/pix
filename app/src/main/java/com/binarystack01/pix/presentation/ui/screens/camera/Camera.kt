@@ -11,12 +11,14 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -29,9 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.binarystack01.pix.R
+import com.binarystack01.pix.domain.usecases.analyzer.TextImageAnalyzer
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CaptureButton
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.ControlButton
 import com.binarystack01.pix.presentation.ui.components.permissionactions.educational.Educational
@@ -47,6 +51,7 @@ fun Camera(
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraController = remember { LifecycleCameraController(context) }
 
+
     val deniedPermission = remember { mutableStateOf(false) }
 
     val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
@@ -59,6 +64,8 @@ fun Camera(
                 )
 
             }
+            // Permission not granted THAN display warning message USER change permission on Pix
+            // App settings
             if (permissionsViewModel.shouldShowRequestPermission(
                     context,
                     Manifest.permission.CAMERA
@@ -77,11 +84,25 @@ fun Camera(
         }
     }
 
+    val detectedText = remember { mutableStateOf("No text detected yet..") }
+    val selectTextRecognition = remember { mutableStateOf(false) }
+
+    LaunchedEffect(selectTextRecognition.value) {
+
+        if (selectTextRecognition.value) {
+            cameraController.setImageAnalysisAnalyzer(
+                ContextCompat.getMainExecutor(context),
+                TextImageAnalyzer(onDetectedText = {
+                    detectedText.value = it
+                    Log.i("MY-TEXT >>>", "Camera: $it")
+                })
+            )
+        }
+    }
 
     DisposableEffect(permissionState) {
         if (permissionState) {
-            Log.d("CAMERA", "Setting up camera use cases")
-            cameraController.setEnabledUseCases(CameraController.IMAGE_CAPTURE)
+            cameraController.setEnabledUseCases(CameraController.IMAGE_CAPTURE or CameraController.IMAGE_ANALYSIS)
             cameraController.bindToLifecycle(lifecycleOwner)
         }
         onDispose {
@@ -93,6 +114,7 @@ fun Camera(
     val clicked = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // USER denied permission WARNING message OPEN SETTING to grant permission
         if (deniedPermission.value) {
             Educational(
                 onClick = {
@@ -105,6 +127,7 @@ fun Camera(
                 buttonTitle = "Open Settings"
             )
         }
+        // Permission GRANTED
         if (permissionState) {
             AndroidView(
                 factory = { ctx ->
@@ -122,12 +145,24 @@ fun Camera(
                     .matchParentSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(androidx.compose.ui.graphics.Color.White)
+                        .padding(16.dp),
+                    text = "HERE ${detectedText.value}"
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    ControlButton(painter = R.drawable.round_short_text)
+                    ControlButton(
+                        onClick = {
+                            selectTextRecognition.value = true
+                        },
+                        painter = R.drawable.round_short_text
+                    )
                     CaptureButton(
                         onClick = {
                             clicked.value = !clicked.value
@@ -156,5 +191,4 @@ fun Camera(
             }
         }
     }
-
 }
