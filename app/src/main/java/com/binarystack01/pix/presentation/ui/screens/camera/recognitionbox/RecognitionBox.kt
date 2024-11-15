@@ -35,11 +35,12 @@ fun RecognitionBox(
     cameraController: LifecycleCameraController,
     detectedText: MutableState<String>,
     selectTextRecognition: MutableState<Boolean>,
+    isBackCameraSelected: MutableState<Boolean>
 ) {
 
-    LaunchedEffect(selectTextRecognition.value) {
 
-        if (selectTextRecognition.value) {
+    LaunchedEffect(selectTextRecognition.value, isBackCameraSelected.value) {
+        if (selectTextRecognition.value && isBackCameraSelected.value) {
 
             cameraController.setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
 
@@ -59,7 +60,7 @@ fun RecognitionBox(
 
     }
 
-    if (selectTextRecognition.value) {
+    if (selectTextRecognition.value && isBackCameraSelected.value) {
         Box(
             modifier = Modifier
                 .padding(8.dp)

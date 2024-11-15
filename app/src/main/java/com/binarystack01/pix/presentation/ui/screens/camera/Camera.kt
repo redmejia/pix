@@ -76,6 +76,7 @@ fun Camera(
     val detectedText = remember { mutableStateOf("") }
     val selectTextRecognition = remember { mutableStateOf(false) }
     val clicked = remember { mutableStateOf(false) }
+    val isBackCameraSelected = remember { mutableStateOf(true) }
 
 
     LaunchedEffect(permissionState) {
@@ -126,7 +127,8 @@ fun Camera(
                 context = context,
                 cameraController = cameraController,
                 selectTextRecognition = selectTextRecognition,
-                detectedText = detectedText
+                detectedText = detectedText,
+                isBackCameraSelected = isBackCameraSelected
             )
             Box(
                 modifier = Modifier.matchParentSize(),
@@ -155,12 +157,13 @@ fun Camera(
                     )
                     ControlButton(
                         onClick = {
-                            cameraController.cameraSelector =
-                                if (cameraController.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                                    CameraSelector.DEFAULT_FRONT_CAMERA
-                                } else {
-                                    CameraSelector.DEFAULT_BACK_CAMERA
-                                }
+                            if (cameraController.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                                isBackCameraSelected.value = false
+                                cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                            } else {
+                                isBackCameraSelected.value = true
+                                cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                            }
                         },
                         painter = R.drawable.rotate_camera
                     )
