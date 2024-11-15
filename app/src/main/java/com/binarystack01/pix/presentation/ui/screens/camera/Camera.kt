@@ -11,11 +11,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -35,6 +32,7 @@ import com.binarystack01.pix.R
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CaptureButton
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.ControlButton
 import com.binarystack01.pix.presentation.ui.components.permissionactions.educational.Educational
+import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonControllers
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
 
@@ -131,16 +129,10 @@ fun Camera(
                 detectedText = detectedText
             )
             Box(
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .matchParentSize(),
+                modifier = Modifier.matchParentSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
+                ButtonControllers(modifier = Modifier.padding(bottom = 15.dp)) {
                     ControlButton(
                         onClick = {
                             selectTextRecognition.value = !selectTextRecognition.value
@@ -154,7 +146,6 @@ fun Camera(
                             clicked.value = !clicked.value
                             // not implemented yet
 //                        visibleBlink.value = true
-//
 //                        captureViewModel.capturePicture(
 //                            context = context,
 //                            controller = cameraController
