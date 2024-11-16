@@ -32,14 +32,19 @@ import com.binarystack01.pix.R
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CaptureButton
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.ControlButton
 import com.binarystack01.pix.presentation.ui.components.permissionactions.educational.Educational
+import com.binarystack01.pix.presentation.ui.screens.camera.blinkanimation.BlinkAnimation
 import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonControllers
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
+import com.binarystack01.pix.presentation.ui.screens.gallery.Gallery
+import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun Camera(
     permissionsViewModel: PermissionsViewModel = viewModel(),
+    captureViewModel: CaptureViewModel = viewModel(),
 ) {
 
     val context = LocalContext.current
@@ -77,6 +82,7 @@ fun Camera(
     val selectTextRecognition = remember { mutableStateOf(false) }
     val clicked = remember { mutableStateOf(false) }
     val isBackCameraSelected = remember { mutableStateOf(true) }
+    val visibleBlink = remember { mutableStateOf(false) }
 
 
     LaunchedEffect(permissionState) {
@@ -96,6 +102,12 @@ fun Camera(
         }
     }
 
+    LaunchedEffect(visibleBlink.value) {
+        if (visibleBlink.value) {
+            delay(200)
+            visibleBlink.value = false
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // USER denied permission WARNING message OPEN SETTING to grant permission
@@ -123,6 +135,8 @@ fun Camera(
                 },
                 modifier = Modifier.fillMaxSize()
             )
+            BlinkAnimation(visible = visibleBlink.value)
+            Gallery() // Temp this will remove when navigation compose is incorporate
             RecognitionBox(
                 context = context,
                 cameraController = cameraController,
@@ -146,12 +160,12 @@ fun Camera(
                     CaptureButton(
                         onClick = {
                             clicked.value = !clicked.value
-                            // not implemented yet
-//                        visibleBlink.value = true
-//                        captureViewModel.capturePicture(
-//                            context = context,
-//                            controller = cameraController
-//                        )
+
+                            visibleBlink.value = true
+                            captureViewModel.capturePicture(
+                                context = context,
+                                cameraController = cameraController,
+                            )
                         },
                         clicked = clicked
                     )
@@ -159,7 +173,8 @@ fun Camera(
                         onClick = {
                             if (cameraController.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
                                 isBackCameraSelected.value = false
-                                cameraController.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+                                cameraController.cameraSelector =
+                                    CameraSelector.DEFAULT_FRONT_CAMERA
                             } else {
                                 isBackCameraSelected.value = true
                                 cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
