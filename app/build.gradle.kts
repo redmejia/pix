@@ -71,11 +71,11 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
 
     // ML Kit camerax extension
-//    implementation(libs.androidx.camera.mlkit.vision)
+    implementation(libs.androidx.camera.mlkit.vision)
 
     // ML Kit
-//    implementation (libs.text.recognition)
-    implementation("com.google.mlkit:text-recognition:16.0.0")
+    implementation(libs.text.recognition)
+
 
 
     implementation(libs.androidx.core.ktx)
