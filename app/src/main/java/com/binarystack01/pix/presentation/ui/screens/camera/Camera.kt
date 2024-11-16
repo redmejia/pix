@@ -35,6 +35,7 @@ import com.binarystack01.pix.presentation.ui.components.permissionactions.educat
 import com.binarystack01.pix.presentation.ui.screens.camera.blinkanimation.BlinkAnimation
 import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonControllers
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
+import com.binarystack01.pix.presentation.ui.screens.gallery.Gallery
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
 import kotlinx.coroutines.delay
@@ -135,6 +136,7 @@ fun Camera(
                 modifier = Modifier.fillMaxSize()
             )
             BlinkAnimation(visible = visibleBlink.value)
+            Gallery() // Temp this will remove when navigation compose is incorporate
             RecognitionBox(
                 context = context,
                 cameraController = cameraController,

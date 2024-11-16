@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class CaptureViewModel : ViewModel() {
 
-    private val _captureState = MutableStateFlow<List<Bitmap>>(emptyList())
-    val captureState: StateFlow<List<Bitmap>> = _captureState.asStateFlow()
+    private val _imageListState = MutableStateFlow<List<Bitmap>>(emptyList())
+    val imageListState: StateFlow<List<Bitmap>> = _imageListState.asStateFlow()
 
     private fun addPhoto(image: Bitmap) {
-        _captureState.value += image
+        _imageListState.value += image
     }
 
     fun capturePicture(context: Context, cameraController: LifecycleCameraController) {
