@@ -1,7 +1,6 @@
 package com.binarystack01.pix.presentation.ui.screens.gallery
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,7 +45,7 @@ fun Gallery(
                 content = {
                     items(imageList) { photo ->
                         Image(
-                            bitmap = photo.asImageBitmap(), contentDescription = null
+                            bitmap = photo.image.asImageBitmap(), contentDescription = null
                         )
                     }
                 },
