@@ -4,13 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.binarystack01.pix.presentation.ui.screens.camera.Camera
+import androidx.navigation.compose.rememberNavController
+import com.binarystack01.pix.presentation.ui.navigation.AppNavigation
+import com.binarystack01.pix.presentation.ui.navigation.BottomBar
 import com.binarystack01.pix.ui.theme.PixTheme
 
 
@@ -21,17 +21,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PixTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(innerPadding)) {
-                        Main()
+                val navHostController = rememberNavController()
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        BottomBar(navController = navHostController)
                     }
+                ) { innerPadding ->
+                    AppNavigation(
+                        modifier = Modifier.padding(innerPadding),
+                        navHostController = navHostController
+                    )
                 }
             }
         }
     }
-}
-
-@Composable
-fun Main() {
-    Camera()
 }
