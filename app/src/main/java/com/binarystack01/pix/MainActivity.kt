@@ -8,13 +8,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.binarystack01.pix.presentation.ui.navigation.AppNavigation
 import com.binarystack01.pix.presentation.ui.navigation.BottomBar
+import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
+import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
 import com.binarystack01.pix.ui.theme.PixTheme
 
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var captureViewModel: CaptureViewModel
+    private lateinit var permissionsViewModel: PermissionsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +28,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             PixTheme {
                 val navHostController = rememberNavController()
+                captureViewModel = viewModel<CaptureViewModel>()
+                permissionsViewModel = viewModel<PermissionsViewModel>()
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = {
@@ -30,7 +39,9 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     AppNavigation(
                         modifier = Modifier.padding(innerPadding),
-                        navHostController = navHostController
+                        navHostController = navHostController,
+                        captureViewModel = captureViewModel,
+                        permissionsViewModel = permissionsViewModel
                     )
                 }
             }

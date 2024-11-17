@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.binarystack01.pix.R
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CaptureButton
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.ControlButton
@@ -35,7 +34,6 @@ import com.binarystack01.pix.presentation.ui.components.permissionactions.educat
 import com.binarystack01.pix.presentation.ui.screens.camera.blinkanimation.BlinkAnimation
 import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonControllers
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
-import com.binarystack01.pix.presentation.ui.screens.gallery.Gallery
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
 import kotlinx.coroutines.delay
@@ -43,8 +41,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Camera(
-    permissionsViewModel: PermissionsViewModel = viewModel(),
-    captureViewModel: CaptureViewModel = viewModel(),
+    permissionsViewModel: PermissionsViewModel,
+    captureViewModel: CaptureViewModel,
 ) {
 
     val context = LocalContext.current
@@ -136,7 +134,6 @@ fun Camera(
                 modifier = Modifier.fillMaxSize()
             )
             BlinkAnimation(visible = visibleBlink.value)
-            Gallery() // Temp this will remove when navigation compose is incorporate
             RecognitionBox(
                 context = context,
                 cameraController = cameraController,
