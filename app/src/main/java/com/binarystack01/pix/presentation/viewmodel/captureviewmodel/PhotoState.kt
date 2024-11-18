@@ -4,10 +4,10 @@ import android.graphics.Bitmap
 
 data class Photo(
     val id: String = "",
-    val image: Bitmap,
+    val photo: Bitmap,
 )
 
-data class ImageState(
-    var photos: List<Photo> = emptyList(),
-    var photo: Photo? = null,
+data class PhotoState(
+    val photos: List<Photo> = emptyList(),
+    val photo: Photo? = null,
 )

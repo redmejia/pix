@@ -12,21 +12,29 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 class CaptureViewModel : ViewModel() {
 
-    private val _imageListState = MutableStateFlow<List<ImageState>>(emptyList())
-    val imageListState: StateFlow<List<ImageState>> = _imageListState.asStateFlow()
-
-    private fun addPhoto(image: Bitmap) {
-        val id = generateUUID()
-        val newItem = _imageListState.value.toMutableList()
-        newItem.add(ImageState(id = id, image = image))
-        _imageListState.value = newItem
-    }
+    private val _photoState = MutableStateFlow(PhotoState())
+    val photoState: StateFlow<PhotoState> = _photoState.asStateFlow()
 
     private fun generateUUID(): String = UUID.randomUUID().toString()
+
+    private fun addPhoto(photo: Bitmap) {
+        val id = generateUUID()
+        _photoState.update { currentState ->
+            currentState.copy(
+                photos = currentState.photos + Photo(id = id, photo = photo)
+            )
+        }
+    }
+
+    fun loadPhoto(id: String) {
+        val photo = _photoState.value.photos.find { image -> image.id == id }
+        _photoState.value = _photoState.value.copy(photo = photo)
+    }
 
     fun capturePicture(context: Context, cameraController: LifecycleCameraController) {
         cameraController.takePicture(
