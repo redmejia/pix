@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import com.binarystack01.pix.data.local.room.entities.Photo
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CloseButton
-import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.Photo
 import com.binarystack01.pix.ui.theme.BlackPrimary40
 
 
@@ -35,25 +35,25 @@ fun PhotoViewer(
                 .background(color = BlackPrimary40)
         ) {
 
-
-            Image(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        scaleX = scale.floatValue
-                        scaleY = scale.floatValue
-                        translationX = offsetX.floatValue
-                        translationY = offsetY.floatValue
-                    }
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, _, zoom, _ ->
-                            scale.floatValue =
-                                (scale.floatValue * zoom).coerceIn(1f, 3f)
-                        }
-                    },
-                bitmap = photo.photo.asImageBitmap(),
-                contentDescription = null
-            )
+            // Image this will be change
+//            Image(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .graphicsLayer {
+//                        scaleX = scale.floatValue
+//                        scaleY = scale.floatValue
+//                        translationX = offsetX.floatValue
+//                        translationY = offsetY.floatValue
+//                    }
+//                    .pointerInput(Unit) {
+//                        detectTransformGestures { _, _, zoom, _ ->
+//                            scale.floatValue =
+//                                (scale.floatValue * zoom).coerceIn(1f, 3f)
+//                        }
+//                    },
+//                bitmap = photo.photo.asImageBitmap(),
+//                contentDescription = null
+//            )
 
             Box(
                 contentAlignment = Alignment.TopStart

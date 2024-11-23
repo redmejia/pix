@@ -54,25 +54,25 @@ fun Gallery(
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        contentPadding = PaddingValues(2.dp),
-                        verticalArrangement = Arrangement.spacedBy(2.dp),
-                        horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        content = {
-                            items(photoState.photos) { photo ->
-                                Image(
-                                    modifier = Modifier.clickable {
-                                        selectPhotoId.value = photo.id
-                                    },
-                                    bitmap = photo.photo.asImageBitmap(), contentDescription = null
-                                )
-                            }
-                        },
-                    )
-                    photoState.photo?.let { photo ->
-                        PhotoViewer(photo = photo, open = openViewer)
-                    }
+//                    LazyVerticalGrid(
+//                        columns = GridCells.Fixed(3),
+//                        contentPadding = PaddingValues(2.dp),
+//                        verticalArrangement = Arrangement.spacedBy(2.dp),
+//                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+//                        content = {
+//                            items(photoState.photos) { photo ->
+//                                Image(
+//                                    modifier = Modifier.clickable {
+//                                        selectPhotoId.value = photo.id
+//                                    },
+//                                    bitmap = photo.photo.asImageBitmap(), contentDescription = null
+//                                )
+//                            }
+//                        },
+//                    )
+//                    photoState.photo?.let { photo ->
+//                        PhotoViewer(photo = photo, open = openViewer)
+//                    }
                 }
             }
         }

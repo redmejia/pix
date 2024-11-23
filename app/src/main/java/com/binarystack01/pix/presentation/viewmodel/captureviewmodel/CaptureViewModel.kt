@@ -27,15 +27,15 @@ class CaptureViewModel : ViewModel() {
 
     private fun generateUUID(): String = UUID.randomUUID().toString()
 
-    private fun addPhoto(photo: Bitmap) {
-        val id = generateUUID()
-        val thumbnail = Bitmap.createScaledBitmap(photo, WIDTH, HEIGHT, true)
-        _photoState.update { currentState ->
-            currentState.copy(
-                photos = currentState.photos + Photo(id = id, photo = thumbnail)
-            )
-        }
-    }
+//    private fun addPhoto(photo: Bitmap) {
+//        val id = generateUUID()
+//        val thumbnail = Bitmap.createScaledBitmap(photo, WIDTH, HEIGHT, true)
+//        _photoState.update { currentState ->
+//            currentState.copy(
+//                photos = currentState.photos + Photo(id = id, photo = thumbnail)
+//            )
+//        }
+//    }
 
     private suspend fun savePhoto(context: Context, bitmap: Bitmap, fileName: String): String {
 
@@ -92,8 +92,8 @@ class CaptureViewModel : ViewModel() {
 
 
     fun loadPhoto(id: String) {
-        val photo = _photoState.value.photos.find { image -> image.id == id }
-        _photoState.value = _photoState.value.copy(photo = photo)
+//        val photo = _photoState.value.photos.find { image -> image.id. == id }
+//        _photoState.value = _photoState.value.copy(photo = photo)
     }
 
     fun capturePicture(context: Context, cameraController: LifecycleCameraController) {
@@ -106,7 +106,7 @@ class CaptureViewModel : ViewModel() {
 //                        val photoId = generateUUID()
 //                        saveThumbnail(context, bitmap = image.toBitmap(), photoId)
 //                    }
-                    addPhoto(image.toBitmap())
+//                    addPhoto(image.toBitmap())
                     image.close()
                 }
 
