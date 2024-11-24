@@ -9,7 +9,7 @@ data class Photo(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     @ColumnInfo(name = "file_name")
-    val fileName: String? = null,
+    val fileName: String = "",
     @ColumnInfo(name = "photo_path")
-    val path: String? = null,
+    val path: String = "",
 )
