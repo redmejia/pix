@@ -51,16 +51,6 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
         }
     }
 
-//    private fun addPhoto(photo: Bitmap) {
-//        val id = generateUUID()
-//        val thumbnail = Bitmap.createScaledBitmap(photo, WIDTH, HEIGHT, true)
-//        _photoState.update { currentState ->
-//            currentState.copy(
-//                photos = currentState.photos + Photo(id = id, photo = thumbnail)
-//            )
-//        }
-//    }
-
     private suspend fun savePhoto(context: Context, bitmap: Bitmap, fileName: String): String {
 
         val photsDir = File(context.filesDir, DIRECTORY_NAME)
@@ -75,7 +65,7 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
         withContext(Dispatchers.IO) {
             FileOutputStream(photoFile).use { outputStream ->
-                photo.compress(Bitmap.CompressFormat.JPEG, 0, outputStream)
+                photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             }
         }
 
@@ -83,42 +73,43 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
     }
 
-    // this should executed inside of loadPhoto method
-//    private fun loadThumbnail(filePath: String): Bitmap {
-//        val options = BitmapFactory.Options().apply {
-//            inJustDecodeBounds = true
-//            BitmapFactory.decodeFile(filePath, this)
-//            inSampleSize = calculateInSampleSize(this, WIDTH, HEIGHT)
-//            inJustDecodeBounds = false
-//        }
-//        return BitmapFactory.decodeFile(filePath, options)
-//    }
-//
-//    private fun calculateInSampleSize(
-//        options: BitmapFactory.Options,
-//        reqWidth: Int,
-//        reqHeight: Int,
-//    ): Int {
-//        val (height: Int, width: Int) = options.outHeight to options.outWidth
-//        var inSampleSize = 1
-//
-//        if (height > reqHeight || width > reqWidth) {
-//            val halfHeight: Int = height / 2
-//            val halfWidth: Int = width / 2
-//            while ((halfHeight / inSampleSize) >= reqHeight &&
-//                (halfWidth / inSampleSize) >= reqWidth
-//            ) {
-//                inSampleSize *= 2
-//            }
-//        }
-//        return inSampleSize
-//    }
+    private suspend fun loadImage(filePath: String): Bitmap {
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+            BitmapFactory.decodeFile(filePath, this)
+            inSampleSize = calculateInSampleSize(this, WIDTH, HEIGHT)
+            inJustDecodeBounds = false
+        }
+        return BitmapFactory.decodeFile(filePath, options)
+    }
+
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int,
+    ): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+            while ((halfHeight / inSampleSize) >= reqHeight &&
+                (halfWidth / inSampleSize) >= reqWidth
+            ) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
+    }
 
     // this will be replace
-    fun loadPhoto(id: String) {
-//        val photo = _photoState.value.photos.find { image -> image.id. == id }
-//        _photoState.value = _photoState.value.copy(photo = photo)
-        Log.d("LOAD", "loadPhoto: $id")
+    fun loadPhoto(fileName: String) {
+        viewModelScope.launch {
+            val filePath = photoRepository.getImage(fileName)
+            val photo = loadImage(filePath)
+            _photoState.value = _photoState.value.copy(photo = photo)
+        }
     }
 
     fun capturePicture(context: Context, cameraController: LifecycleCameraController) {
@@ -132,7 +123,7 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
                         val path = savePhoto(context, bitmap = image.toBitmap(), photoId)
                         photoRepository.insert(
                             photo = Photo(
-                                fileName = "${photoId}.${IMAGE_FORMAT}",
+                                fileName = "${photoId}",
                                 path = path,
                             )
                         )

@@ -1,5 +1,6 @@
 package com.binarystack01.pix.presentation.ui.screens.gallery
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.binarystack01.pix.presentation.ui.screens.gallery.photoviewer.PhotoViewer
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import java.io.File
 
@@ -33,7 +35,7 @@ fun Gallery(
 
     LaunchedEffect(selectPhotoId.value) {
         if (selectPhotoId.value.isNotBlank()) {
-            captureViewModel.loadPhoto(selectPhotoId.value)
+            captureViewModel.loadPhoto(fileName = selectPhotoId.value)
             selectPhotoId.value = ""
             openViewer.value = !openViewer.value
         }
@@ -59,18 +61,18 @@ fun Gallery(
                         content = {
                             items(photoState.photos) { photo ->
                                 AsyncImage(
-//                                    modifier = Modifier.clickable {
-//                                        selectPhotoId.value = photo.id
-//                                    },
+                                    modifier = Modifier.clickable {
+                                        selectPhotoId.value = photo.fileName
+                                    },
                                     model = File(photo.path),
                                     contentDescription = null
                                 )
                             }
                         },
                     )
-//                    photoState.photo?.let { photo ->
-//                        PhotoViewer(photo = photo, open = openViewer)
-//                    }
+                    photoState.photo?.let { photo ->
+                        PhotoViewer(photo = photo, open = openViewer)
+                    }
                 }
             }
         }
