@@ -15,13 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import coil3.Image
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CloseButton
+import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.ui.theme.BlackPrimary40
 
 
 @Composable
 fun PhotoViewer(
+    captureViewModel: CaptureViewModel,
     open: MutableState<Boolean>,
     photo: Bitmap,
 ) {
@@ -57,7 +58,10 @@ fun PhotoViewer(
             Box(
                 contentAlignment = Alignment.TopStart
             ) {
-                CloseButton(onClick = { open.value = !open.value })
+                CloseButton(onClick = {
+                    captureViewModel.resetPhotoState()
+                    open.value = !open.value
+                })
             }
         }
     }

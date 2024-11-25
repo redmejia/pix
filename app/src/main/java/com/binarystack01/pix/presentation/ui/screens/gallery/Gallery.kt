@@ -71,7 +71,11 @@ fun Gallery(
                         },
                     )
                     photoState.photo?.let { photo ->
-                        PhotoViewer(photo = photo, open = openViewer)
+                        PhotoViewer(
+                            captureViewModel = captureViewModel,
+                            photo = photo,
+                            open = openViewer
+                        )
                     }
                 }
             }

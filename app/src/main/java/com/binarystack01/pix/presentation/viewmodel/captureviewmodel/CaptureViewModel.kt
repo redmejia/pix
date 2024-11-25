@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,6 +97,10 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
             val photo = BitmapFactory.decodeFile(filePath)
             _photoState.value = _photoState.value.copy(photo = photo)
         }
+    }
+
+    fun resetPhotoState() {
+        _photoState.value = _photoState.value.copy(photo = null)
     }
 
     fun capturePicture(context: Context, cameraController: LifecycleCameraController) {
