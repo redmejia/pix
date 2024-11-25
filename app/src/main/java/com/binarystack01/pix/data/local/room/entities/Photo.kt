@@ -8,8 +8,10 @@ import androidx.room.PrimaryKey
 data class Photo(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
-    @ColumnInfo(name = "file_name")
+    @ColumnInfo(name = "file_name") // ID File Name
     val fileName: String = "",
+    @ColumnInfo(name = "thumbnail_path")
+    val thumbnailPath: String = "",
     @ColumnInfo(name = "photo_path")
     val path: String = "",
 )

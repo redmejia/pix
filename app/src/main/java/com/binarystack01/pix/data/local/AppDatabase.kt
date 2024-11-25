@@ -34,5 +34,5 @@ abstract class AppDatabase : RoomDatabase() {
     }
 }
 
-const val DB_VERSION = 2
+const val DB_VERSION = 3
 const val DB_NAME = "pix_db"

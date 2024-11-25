@@ -64,7 +64,7 @@ fun Gallery(
                                     modifier = Modifier.clickable {
                                         selectPhotoId.value = photo.fileName
                                     },
-                                    model = File(photo.path),
+                                    model = File(photo.thumbnailPath),
                                     contentDescription = null
                                 )
                             }

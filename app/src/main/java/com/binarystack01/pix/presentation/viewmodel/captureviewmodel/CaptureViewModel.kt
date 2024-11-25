@@ -51,6 +51,15 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
         }
     }
 
+    private suspend fun writeAndSave(file: File, bitmap: Bitmap) {
+        withContext(Dispatchers.IO) {
+            FileOutputStream(file).use { outputStream ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
+        }
+    }
+
+
     private suspend fun savePhoto(context: Context, bitmap: Bitmap, fileName: String): String {
 
         val photsDir = File(context.filesDir, DIRECTORY_NAME)
@@ -59,55 +68,34 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
             photsDir.mkdir()
         }
 
-        val photo = Bitmap.createScaledBitmap(bitmap, WIDTH, HEIGHT, true)
         val photoFile = File(photsDir, "$fileName.$IMAGE_FORMAT")
 
+        writeAndSave(photoFile, bitmap)
 
-        withContext(Dispatchers.IO) {
-            FileOutputStream(photoFile).use { outputStream ->
-                photo.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            }
+        return photoFile.absolutePath
+    }
+
+    private suspend fun saveThumbnail(context: Context, bitmap: Bitmap, fileName: String): String {
+
+        val thumbnailDir = File(context.filesDir, "thumbnails")
+
+        if (!thumbnailDir.exists()) {
+            thumbnailDir.mkdir()
         }
+
+        val photo = Bitmap.createScaledBitmap(bitmap, WIDTH, HEIGHT, true)
+        val photoFile = File(thumbnailDir, "$fileName.$IMAGE_FORMAT")
+
+        writeAndSave(photoFile, photo)
 
         return photoFile.absolutePath
 
     }
 
-    private suspend fun loadImage(filePath: String): Bitmap {
-        val options = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
-            BitmapFactory.decodeFile(filePath, this)
-            inSampleSize = calculateInSampleSize(this, WIDTH, HEIGHT)
-            inJustDecodeBounds = false
-        }
-        return BitmapFactory.decodeFile(filePath, options)
-    }
-
-    private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
-        reqWidth: Int,
-        reqHeight: Int,
-    ): Int {
-        val (height: Int, width: Int) = options.outHeight to options.outWidth
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-            while ((halfHeight / inSampleSize) >= reqHeight &&
-                (halfWidth / inSampleSize) >= reqWidth
-            ) {
-                inSampleSize *= 2
-            }
-        }
-        return inSampleSize
-    }
-
-    // this will be replace
     fun loadPhoto(fileName: String) {
         viewModelScope.launch {
             val filePath = photoRepository.getImage(fileName)
-            val photo = loadImage(filePath)
+            val photo = BitmapFactory.decodeFile(filePath)
             _photoState.value = _photoState.value.copy(photo = photo)
         }
     }
@@ -120,15 +108,18 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
                     super.onCaptureSuccess(image)
                     viewModelScope.launch {
                         val photoId = generateUUID()
-                        val path = savePhoto(context, bitmap = image.toBitmap(), photoId)
+                        val thumbnailPath =
+                            saveThumbnail(context, bitmap = image.toBitmap(), photoId)
+                        val photoPath = savePhoto(context, bitmap = image.toBitmap(), photoId)
                         photoRepository.insert(
                             photo = Photo(
                                 fileName = "${photoId}",
-                                path = path,
+                                thumbnailPath = thumbnailPath,
+                                path = photoPath,
                             )
                         )
+                        image.close()
                     }
-                    image.close()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -138,6 +129,5 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
             }
         )
     }
-
 
 }
