@@ -1,5 +1,6 @@
 package com.binarystack01.pix.presentation.ui.screens.gallery.photoviewer
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -15,14 +16,15 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CloseButton
-import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.Photo
+import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.ui.theme.BlackPrimary40
 
 
 @Composable
 fun PhotoViewer(
+    captureViewModel: CaptureViewModel,
     open: MutableState<Boolean>,
-    photo: Photo,
+    photo: Bitmap,
 ) {
     val scale = remember { mutableFloatStateOf(1f) }
     val offsetX = remember { mutableFloatStateOf(0f) }
@@ -34,8 +36,6 @@ fun PhotoViewer(
                 .fillMaxSize()
                 .background(color = BlackPrimary40)
         ) {
-
-
             Image(
                 modifier = Modifier
                     .fillMaxSize()
@@ -51,14 +51,17 @@ fun PhotoViewer(
                                 (scale.floatValue * zoom).coerceIn(1f, 3f)
                         }
                     },
-                bitmap = photo.photo.asImageBitmap(),
+                bitmap = photo.asImageBitmap(),
                 contentDescription = null
             )
 
             Box(
                 contentAlignment = Alignment.TopStart
             ) {
-                CloseButton(onClick = { open.value = !open.value })
+                CloseButton(onClick = {
+                    captureViewModel.resetPhotoState()
+                    open.value = !open.value
+                })
             }
         }
     }

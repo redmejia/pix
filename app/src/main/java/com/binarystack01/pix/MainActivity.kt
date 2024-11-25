@@ -10,6 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.binarystack01.pix.data.local.AppDatabase
+import com.binarystack01.pix.data.local.room.dao.PhotoDao
+import com.binarystack01.pix.data.repositories.room.PhotoRepository
 import com.binarystack01.pix.presentation.ui.navigation.AppNavigation
 import com.binarystack01.pix.presentation.ui.navigation.BottomBar
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
@@ -22,13 +25,24 @@ class MainActivity : ComponentActivity() {
     private lateinit var captureViewModel: CaptureViewModel
     private lateinit var permissionsViewModel: PermissionsViewModel
 
+    private lateinit var photoRepository: PhotoRepository
+    private lateinit var photoDao: PhotoDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PixTheme {
+                val db = AppDatabase.getInstance(context = applicationContext)
+                photoDao = db.photoDao()
+
+                photoRepository = PhotoRepository(photoDao)
+
                 val navHostController = rememberNavController()
-                captureViewModel = viewModel<CaptureViewModel>()
+                captureViewModel = viewModel {
+                    CaptureViewModel(photoRepository)
+                }
+
                 permissionsViewModel = viewModel<PermissionsViewModel>()
 
                 Scaffold(
