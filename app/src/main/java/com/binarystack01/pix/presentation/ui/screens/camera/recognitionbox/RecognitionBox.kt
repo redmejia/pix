@@ -33,9 +33,10 @@ import com.binarystack01.pix.presentation.ui.components.textbox.TextBox
 fun RecognitionBox(
     context: Context,
     cameraController: LifecycleCameraController,
+    isTextDetected: MutableState<Boolean>,
     detectedText: MutableState<String>,
     selectTextRecognition: MutableState<Boolean>,
-    isBackCameraSelected: MutableState<Boolean>
+    isBackCameraSelected: MutableState<Boolean>,
 ) {
 
 
@@ -47,8 +48,12 @@ fun RecognitionBox(
             cameraController.setImageAnalysisAnalyzer(
                 ContextCompat.getMainExecutor(context),
                 TextImageAnalyzer(onDetectedText = { text ->
-                    detectedText.value = text
-                    Log.i("MY-TEXT >>>", "Camera: $text")
+                    if (text.isNotBlank()) {
+                        isTextDetected.value = true
+                        detectedText.value = text
+                        Log.i("TEXT >>>", "Camera: $text")
+
+                    }
                 })
             )
 

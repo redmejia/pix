@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -36,6 +37,9 @@ import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonCo
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
+import com.binarystack01.pix.ui.theme.BlackPrimary0
+import com.binarystack01.pix.ui.theme.BluePrimary50
+import com.binarystack01.pix.ui.theme.GrayNeutral
 import kotlinx.coroutines.delay
 
 
@@ -77,6 +81,7 @@ fun Camera(
     val permissionState by permissionsViewModel.permissionState.collectAsState()
 
     val detectedText = remember { mutableStateOf("") }
+    val isTextDetected = remember { mutableStateOf(false) }
     val selectTextRecognition = remember { mutableStateOf(false) }
     val clicked = remember { mutableStateOf(false) }
     val isBackCameraSelected = remember { mutableStateOf(true) }
@@ -108,6 +113,7 @@ fun Camera(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Log.d("STADO", "Camera: ${isTextDetected.value}")
         // USER denied permission WARNING message OPEN SETTING to grant permission
         if (deniedPermission.value) {
             Educational(
@@ -138,6 +144,7 @@ fun Camera(
                 context = context,
                 cameraController = cameraController,
                 selectTextRecognition = selectTextRecognition,
+                isTextDetected = isTextDetected,
                 detectedText = detectedText,
                 isBackCameraSelected = isBackCameraSelected
             )
@@ -150,19 +157,34 @@ fun Camera(
                         onClick = {
                             selectTextRecognition.value = !selectTextRecognition.value
                             detectedText.value =
-                                if (selectTextRecognition.value) "Detecting...." else ""
+                                if (selectTextRecognition.value) "Detecting..." else ""
                         },
                         painter = R.drawable.round_short_text
                     )
+
+                    val colorAction =
+                        colorActionCaptureButton(
+                            selectTextRecognition.value
+                                    && isBackCameraSelected.value
+                        )
                     CaptureButton(
+                        outerBorderColor = colorAction.first,
+                        outerBackgroundColor = colorAction.second,
+                        innerBackgroundColor = colorAction.third,
                         onClick = {
                             clicked.value = !clicked.value
+                            
+                            if (isTextDetected.value) {
+                                Log.d("DATA-SAVE", "Camera: ${detectedText.value}")
+                            }
 
-                            visibleBlink.value = true
-                            captureViewModel.capturePicture(
-                                context = context,
-                                cameraController = cameraController,
-                            )
+                            // For Photo capture
+//                            visibleBlink.value = true
+//                            captureViewModel.capturePicture(
+//                                context = context,
+//                                cameraController = cameraController,
+//                            )
+
                         },
                         clicked = clicked
                     )
@@ -170,10 +192,12 @@ fun Camera(
                         onClick = {
                             if (cameraController.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
                                 isBackCameraSelected.value = false
+                                selectTextRecognition.value = false
                                 cameraController.cameraSelector =
                                     CameraSelector.DEFAULT_FRONT_CAMERA
                             } else {
                                 isBackCameraSelected.value = true
+                                selectTextRecognition.value = false
                                 cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                             }
                         },
@@ -183,4 +207,15 @@ fun Camera(
             }
         }
     }
+}
+// Change the color of the button when Text Recognition button controller is selected.
+@Composable
+fun colorActionCaptureButton(evalAction: Boolean): Triple<Color, Color, Color> {
+    val (outerBorderColor, outerBackgroundColor, innerBackgroundColor) =
+        if (evalAction) {
+            Triple(BluePrimary50, BlackPrimary0, BluePrimary50)
+        } else {
+            Triple(GrayNeutral, BlackPrimary0, GrayNeutral)
+        }
+    return Triple(outerBorderColor, outerBackgroundColor, innerBackgroundColor)
 }
