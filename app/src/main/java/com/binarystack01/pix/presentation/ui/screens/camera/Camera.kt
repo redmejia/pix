@@ -113,7 +113,6 @@ fun Camera(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Log.d("STADO", "Camera: ${isTextDetected.value}")
         // USER denied permission WARNING message OPEN SETTING to grant permission
         if (deniedPermission.value) {
             Educational(
@@ -155,7 +154,9 @@ fun Camera(
                 ButtonControllers(modifier = Modifier.padding(bottom = 15.dp)) {
                     ControlButton(
                         onClick = {
+                            Log.d("STADO", "Camera: ${isTextDetected.value}")
                             selectTextRecognition.value = !selectTextRecognition.value
+                            isTextDetected.value = false
                             detectedText.value =
                                 if (selectTextRecognition.value) "Detecting..." else ""
                         },
@@ -173,8 +174,8 @@ fun Camera(
                         innerBackgroundColor = colorAction.third,
                         onClick = {
                             clicked.value = !clicked.value
-                            
-                            if (isTextDetected.value) {
+
+                            if (isTextDetected.value && selectTextRecognition.value) {
                                 Log.d("DATA-SAVE", "Camera: ${detectedText.value}")
                             }
 
@@ -208,6 +209,7 @@ fun Camera(
         }
     }
 }
+
 // Change the color of the button when Text Recognition button controller is selected.
 @Composable
 fun colorActionCaptureButton(evalAction: Boolean): Triple<Color, Color, Color> {
