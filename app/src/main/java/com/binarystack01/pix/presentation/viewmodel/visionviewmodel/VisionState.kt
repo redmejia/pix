@@ -1,12 +1,7 @@
 package com.binarystack01.pix.presentation.viewmodel.visionviewmodel
 
-data class VisionData(
-    val title: String,
-    val text: String,
-    val createdAt: String,
-)
-
+import com.binarystack01.pix.data.local.room.entities.Vision
 
 data class VisionState(
-    val data: List<VisionData> = emptyList(),
+    val data: List<Vision> = emptyList(),
 )
