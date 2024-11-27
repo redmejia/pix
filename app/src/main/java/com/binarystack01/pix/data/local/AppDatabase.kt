@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.binarystack01.pix.data.local.room.dao.PhotoDao
+import com.binarystack01.pix.data.local.room.dao.VisionDao
 import com.binarystack01.pix.data.local.room.entities.Photo
 
 @Database(
@@ -14,6 +15,7 @@ import com.binarystack01.pix.data.local.room.entities.Photo
 
 abstract class AppDatabase : RoomDatabase() {
     abstract fun photoDao(): PhotoDao
+    abstract fun visionDao(): VisionDao
 
     companion object {
         @Volatile
