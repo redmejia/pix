@@ -37,6 +37,7 @@ import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonCo
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
+import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
 import com.binarystack01.pix.ui.theme.BlackPrimary0
 import com.binarystack01.pix.ui.theme.BluePrimary50
 import com.binarystack01.pix.ui.theme.GrayNeutral
@@ -47,6 +48,7 @@ import kotlinx.coroutines.delay
 fun Camera(
     permissionsViewModel: PermissionsViewModel,
     captureViewModel: CaptureViewModel,
+    visionViewModel: VisionViewModel
 ) {
 
     val context = LocalContext.current
@@ -176,7 +178,7 @@ fun Camera(
                             clicked.value = !clicked.value
 
                             if (isTextDetected.value && selectTextRecognition.value) {
-                                Log.d("DATA-SAVE", "Camera: ${detectedText.value}")
+                                visionViewModel.saveVisionText(title = "Test", text = detectedText.value)
                             }
 
                             // For Photo capture

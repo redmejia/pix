@@ -29,7 +29,8 @@ fun AppNavigation(
         composable(route = AppScreens.Camera.name) {
             Camera(
                 permissionsViewModel = permissionsViewModel,
-                captureViewModel = captureViewModel
+                captureViewModel = captureViewModel,
+                visionViewModel = visionViewModel
             )
         }
 

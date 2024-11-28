@@ -2,7 +2,7 @@ package com.binarystack01.pix.domain.usecases.encoder
 
 import android.util.Base64
 
-class Text : Encoder {
+class Base64Codec : Encoder {
     override fun encodeText(plainText: String): String {
         return Base64.encodeToString(plainText.toByteArray(), Base64.DEFAULT)
     }
