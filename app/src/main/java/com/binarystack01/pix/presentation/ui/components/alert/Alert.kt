@@ -1,4 +1,4 @@
-package com.binarystack01.pix.presentation.ui.components.savealert
+package com.binarystack01.pix.presentation.ui.components.alert
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
