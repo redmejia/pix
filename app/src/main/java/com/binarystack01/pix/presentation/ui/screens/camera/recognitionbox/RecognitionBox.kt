@@ -6,7 +6,7 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -33,9 +33,10 @@ import com.binarystack01.pix.presentation.ui.components.textbox.TextBox
 fun RecognitionBox(
     context: Context,
     cameraController: LifecycleCameraController,
+    isTextDetected: MutableState<Boolean>,
     detectedText: MutableState<String>,
     selectTextRecognition: MutableState<Boolean>,
-    isBackCameraSelected: MutableState<Boolean>
+    isBackCameraSelected: MutableState<Boolean>,
 ) {
 
 
@@ -47,8 +48,12 @@ fun RecognitionBox(
             cameraController.setImageAnalysisAnalyzer(
                 ContextCompat.getMainExecutor(context),
                 TextImageAnalyzer(onDetectedText = { text ->
-                    detectedText.value = text
-                    Log.i("MY-TEXT >>>", "Camera: $text")
+                    if (text.isNotBlank()) {
+                        isTextDetected.value = true
+                        detectedText.value = text
+                        Log.i("TEXT >>>", "Camera: $text")
+
+                    }
                 })
             )
 
@@ -64,7 +69,7 @@ fun RecognitionBox(
         Box(
             modifier = Modifier
                 .padding(8.dp)
-                .fillMaxSize(),
+                .fillMaxHeight(0.80f),
         ) {
             TextBox(
                 modifier = Modifier.fillMaxWidth()

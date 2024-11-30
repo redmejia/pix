@@ -5,15 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.binarystack01.pix.data.local.room.dao.PhotoDao
+import com.binarystack01.pix.data.local.room.dao.VisionDao
 import com.binarystack01.pix.data.local.room.entities.Photo
+import com.binarystack01.pix.data.local.room.entities.Vision
 
 @Database(
-    entities = [Photo::class],
+    entities = [
+        Photo::class,
+        Vision::class,
+    ],
     version = DB_VERSION,
 )
 
 abstract class AppDatabase : RoomDatabase() {
     abstract fun photoDao(): PhotoDao
+    abstract fun visionDao(): VisionDao
 
     companion object {
         @Volatile
@@ -34,5 +40,5 @@ abstract class AppDatabase : RoomDatabase() {
     }
 }
 
-const val DB_VERSION = 3
+const val DB_VERSION = 1
 const val DB_NAME = "pix_db"

@@ -12,21 +12,28 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.binarystack01.pix.data.local.AppDatabase
 import com.binarystack01.pix.data.local.room.dao.PhotoDao
+import com.binarystack01.pix.data.local.room.dao.VisionDao
 import com.binarystack01.pix.data.repositories.room.PhotoRepository
+import com.binarystack01.pix.data.repositories.room.VisionRepository
 import com.binarystack01.pix.presentation.ui.navigation.AppNavigation
 import com.binarystack01.pix.presentation.ui.navigation.BottomBar
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
+import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
 import com.binarystack01.pix.ui.theme.PixTheme
 
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var captureViewModel: CaptureViewModel
+    private lateinit var visionViewModel: VisionViewModel
     private lateinit var permissionsViewModel: PermissionsViewModel
 
     private lateinit var photoRepository: PhotoRepository
+    private lateinit var visionRepository: VisionRepository
+
     private lateinit var photoDao: PhotoDao
+    private lateinit var visionDao: VisionDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +42,17 @@ class MainActivity : ComponentActivity() {
             PixTheme {
                 val db = AppDatabase.getInstance(context = applicationContext)
                 photoDao = db.photoDao()
+                visionDao = db.visionDao()
 
                 photoRepository = PhotoRepository(photoDao)
+                visionRepository = VisionRepository(visionDao)
 
-                val navHostController = rememberNavController()
-                captureViewModel = viewModel {
-                    CaptureViewModel(photoRepository)
-                }
+                captureViewModel = viewModel { CaptureViewModel(photoRepository) }
+                visionViewModel = viewModel { VisionViewModel(visionRepository) }
 
                 permissionsViewModel = viewModel<PermissionsViewModel>()
+
+                val navHostController = rememberNavController()
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -55,6 +64,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         navHostController = navHostController,
                         captureViewModel = captureViewModel,
+                        visionViewModel = visionViewModel,
                         permissionsViewModel = permissionsViewModel
                     )
                 }

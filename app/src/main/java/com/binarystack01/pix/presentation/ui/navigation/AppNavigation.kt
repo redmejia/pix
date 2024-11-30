@@ -5,16 +5,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.binarystack01.pix.data.repositories.room.VisionRepository
 import com.binarystack01.pix.presentation.ui.screens.camera.Camera
 import com.binarystack01.pix.presentation.ui.screens.gallery.Gallery
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
+import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
 
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
     captureViewModel: CaptureViewModel,
+    visionViewModel: VisionViewModel,
     permissionsViewModel: PermissionsViewModel,
 ) {
 
@@ -26,7 +29,8 @@ fun AppNavigation(
         composable(route = AppScreens.Camera.name) {
             Camera(
                 permissionsViewModel = permissionsViewModel,
-                captureViewModel = captureViewModel
+                captureViewModel = captureViewModel,
+                visionViewModel = visionViewModel
             )
         }
 

@@ -20,10 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.binarystack01.pix.ui.theme.BlackPrimary0
 import kotlinx.coroutines.delay
+import com.binarystack01.pix.ui.theme.GrayNeutral
 
 @Composable
 fun CaptureButton(
+    icon: @Composable () -> Unit = {},
+    outerBorderColor: Color = GrayNeutral,
+    outerBackgroundColor: Color = BlackPrimary0,
+    innerBackgroundColor: Color = GrayNeutral,
     onClick: () -> Unit = {},
     clicked: MutableState<Boolean>,
 ) {
@@ -49,17 +55,23 @@ fun CaptureButton(
     ) {
         // outer circle
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(60.dp)
-                .border(width = 3.dp, color = Color(0xFFD9D9D9), shape = CircleShape)
-                .background(color = Color.Black, CircleShape)
-        )
-        // inner circle
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .background(color = Color(0xFFD9D9D9), shape = CircleShape)
-        )
+                .border(width = 3.dp, color = outerBorderColor, shape = CircleShape)
+                .background(color = outerBackgroundColor, CircleShape)
+        ){
+            // inner circle
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(color = innerBackgroundColor, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                icon()
+            }
+        }
+
     }
 
     LaunchedEffect(clicked.value) {
