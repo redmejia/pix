@@ -11,21 +11,9 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -33,35 +21,26 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.binarystack01.pix.R
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CaptureButton
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.ControlButton
-import com.binarystack01.pix.presentation.ui.components.alert.Alert
 import com.binarystack01.pix.presentation.ui.components.permissionactions.educational.Educational
-import com.binarystack01.pix.presentation.ui.components.textinput.TextInput
 import com.binarystack01.pix.presentation.ui.screens.camera.blinkanimation.BlinkAnimation
 import com.binarystack01.pix.presentation.ui.screens.camera.controllers.ButtonControllers
 import com.binarystack01.pix.presentation.ui.screens.camera.recognitionbox.RecognitionBox
+import com.binarystack01.pix.presentation.ui.screens.camera.savealertdialog.SaveAlertDialog
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.presentation.viewmodel.permissionsviewmodel.PermissionsViewModel
 import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
 import com.binarystack01.pix.ui.theme.BlackPrimary0
-import com.binarystack01.pix.ui.theme.BluePrimary40
 import com.binarystack01.pix.ui.theme.BluePrimary50
 import com.binarystack01.pix.ui.theme.GrayNeutral
 import kotlinx.coroutines.delay
@@ -113,7 +92,7 @@ fun Camera(
     val visibleBlink = remember { mutableStateOf(false) }
 
     var visible by remember { mutableStateOf(false) }
-    var input by rememberSaveable { mutableStateOf("") }
+//    var input by rememberSaveable { mutableStateOf("") }
 
 
     LaunchedEffect(permissionState) {
@@ -156,63 +135,11 @@ fun Camera(
         }
         // Permission GRANTED
         if (permissionState) {
-            Alert(
+            SaveAlertDialog(
+                visionViewModel = visionViewModel,
+                detectedText = detectedText.value,
                 visible = visible,
-                onDismissRequest = { visible = false },
-                modifier = Modifier
-                    .height(200.dp)
-                    .fillMaxWidth(),
-                content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Text(
-                            "Save Text",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-
-                        TextInput(
-                            icon = {
-                                Icon(
-                                    Icons.Outlined.Edit,
-                                    contentDescription = "edit",
-                                    tint = BlackPrimary0
-                                )
-                            },
-                            placeHolder = { Text("Title") },
-                            color = BluePrimary50,
-                            value = input,
-                            onChange = { newVal -> input = newVal },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 2.dp)
-                                .shadow(
-                                    elevation = 6.dp,
-                                    spotColor = BluePrimary40,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                        )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End,
-                        ) {
-                            TextButton(onClick = {
-                                visible = false
-                            }) {
-                                Text("Close")
-                            }
-                            TextButton(onClick = {
-                                visible = false // close for now
-                            }) {
-                                Text("Save")
-                            }
-                        }
-                    }
-                }
+                onDismiss = { visible = false }
             )
 
             AndroidView(
@@ -261,22 +188,16 @@ fun Camera(
                         innerBackgroundColor = colorAction.third,
                         onClick = {
                             clicked.value = !clicked.value
-
                             if (isTextDetected.value && selectTextRecognition.value) {
                                 visible = true
-//                                visionViewModel.saveVisionText(
-//                                    title = "Test",
-//                                    text = detectedText.value
-//                                )
+                                selectTextRecognition.value = !selectTextRecognition.value
+                            } else {
+                                visibleBlink.value = true
+                                captureViewModel.capturePicture(
+                                    context = context,
+                                    cameraController = cameraController,
+                                )
                             }
-
-                            // For Photo capture
-//                            visibleBlink.value = true
-//                            captureViewModel.capturePicture(
-//                                context = context,
-//                                cameraController = cameraController,
-//                            )
-
                         },
                         clicked = clicked
                     )
