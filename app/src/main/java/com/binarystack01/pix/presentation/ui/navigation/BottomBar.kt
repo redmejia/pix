@@ -26,7 +26,8 @@ fun BottomBar(
 
     val items = listOf(
         BottomBarItem.Camera,
-        BottomBarItem.Gallery
+        BottomBarItem.Gallery,
+        BottomBarItem.List // RecognitionList Screen
     )
 
     NavigationBar(
