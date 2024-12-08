@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemGesturesPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -17,7 +18,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.CloseButton
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
-import com.binarystack01.pix.ui.theme.BlackPrimary40
+import com.binarystack01.pix.ui.theme.BlackPrimary95
 
 
 @Composable
@@ -34,34 +35,42 @@ fun PhotoViewer(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = BlackPrimary40)
+                .background(color = BlackPrimary95)
         ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        scaleX = scale.floatValue
-                        scaleY = scale.floatValue
-                        translationX = offsetX.floatValue
-                        translationY = offsetY.floatValue
-                    }
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, _, zoom, _ ->
-                            scale.floatValue =
-                                (scale.floatValue * zoom).coerceIn(1f, 3f)
-                        }
-                    },
-                bitmap = photo.asImageBitmap(),
-                contentDescription = null
-            )
 
             Box(
-                contentAlignment = Alignment.TopStart
+                modifier = Modifier
+                    .matchParentSize()
+                    .systemGesturesPadding()
             ) {
-                CloseButton(onClick = {
-                    captureViewModel.resetPhotoState()
-                    open.value = !open.value
-                })
+
+                Image(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            scaleX = scale.floatValue
+                            scaleY = scale.floatValue
+                            translationX = offsetX.floatValue
+                            translationY = offsetY.floatValue
+                        }
+                        .pointerInput(Unit) {
+                            detectTransformGestures { _, _, zoom, _ ->
+                                scale.floatValue =
+                                    (scale.floatValue * zoom).coerceIn(1f, 3f)
+                            }
+                        },
+                    bitmap = photo.asImageBitmap(),
+                    contentDescription = null
+                )
+
+                Box(
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    CloseButton(onClick = {
+                        captureViewModel.resetPhotoState()
+                        open.value = !open.value
+                    })
+                }
             }
         }
     }

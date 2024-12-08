@@ -42,7 +42,10 @@ fun Gallery(
     }
 
     Surface {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             if (photoState.photos.isEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxSize(),

@@ -92,7 +92,6 @@ fun Camera(
     val visibleBlink = remember { mutableStateOf(false) }
 
     var visible by remember { mutableStateOf(false) }
-//    var input by rememberSaveable { mutableStateOf("") }
 
 
     LaunchedEffect(permissionState) {

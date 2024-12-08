@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import com.binarystack01.pix.ui.theme.WhitePrimary0
 fun Card(
     modifier: Modifier = Modifier,
     color: Color = WhitePrimary0,
+    elevation: CardElevation = CardDefaults.elevatedCardElevation(),
     content: @Composable () -> Unit,
 ) {
 
@@ -30,9 +32,7 @@ fun Card(
         colors = CardDefaults.cardColors(
             containerColor = color
         ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 3.dp,
-        ),
+        elevation = elevation,
         modifier = modifier
     ) {
         content()

@@ -28,6 +28,14 @@ class VisionViewModel(private val visionRepository: VisionRepository) : ViewMode
         }
     }
 
+    fun getText(id: Long) {
+        viewModelScope.launch {
+            _visionState.update { currentState ->
+                currentState.copy(text = visionRepository.getRecord(id))
+            }
+        }
+    }
+
     private fun timeNow(): String = time.timeFormater(format = TIME_FORMAT)
 
     fun saveVisionText(title: String, text: String) {
@@ -42,6 +50,21 @@ class VisionViewModel(private val visionRepository: VisionRepository) : ViewMode
             )
         }
     }
+
+    fun changeMode(navigation: () -> Unit) {
+        _visionState.update { currentState ->
+            currentState.copy(readerMode = true)
+        }
+        navigation()
+    }
+
+    fun resetReaderMode() {
+        _visionState.update { currentState ->
+            currentState.copy(readerMode = false)
+        }
+    }
+
+    fun isReadMode(): Boolean = _visionState.value.readerMode
 
     companion object {
         private const val TIME_FORMAT = "MMM dd, yyyy HH:mm a"
