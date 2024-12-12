@@ -28,7 +28,10 @@ import com.binarystack01.pix.ui.theme.PixTheme
 import kotlinx.coroutines.flow.map
 import android.graphics.Color
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import kotlinx.coroutines.delay
 
 
 class MainActivity : ComponentActivity() {
@@ -45,13 +48,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val splashScreen = installSplashScreen()
+        var keepSplashScreen = true
+
         super.onCreate(savedInstanceState)
+        splashScreen.setKeepOnScreenCondition { keepSplashScreen }
+
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
         )
         setContent {
+
             PixTheme {
+
                 val db = AppDatabase.getInstance(context = applicationContext)
                 photoDao = db.photoDao()
                 visionDao = db.visionDao()
@@ -65,6 +77,11 @@ class MainActivity : ComponentActivity() {
                 permissionsViewModel = viewModel<PermissionsViewModel>()
 
                 val navHostController = rememberNavController()
+
+                LaunchedEffect(Unit) {
+                    delay(200)
+                    keepSplashScreen = false
+                }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
