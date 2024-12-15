@@ -14,6 +14,7 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +45,6 @@ import com.binarystack01.pix.ui.theme.BlackPrimary0
 import com.binarystack01.pix.ui.theme.BluePrimary50
 import com.binarystack01.pix.ui.theme.GrayNeutral
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun Camera(
@@ -118,7 +118,11 @@ fun Camera(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+
         // USER denied permission WARNING message OPEN SETTING to grant permission
         if (deniedPermission.value) {
             Educational(
@@ -149,7 +153,8 @@ fun Camera(
                         controller = cameraController
                     }
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
             )
             BlinkAnimation(visible = visibleBlink.value)
             RecognitionBox(
@@ -160,8 +165,15 @@ fun Camera(
                 detectedText = detectedText,
                 isBackCameraSelected = isBackCameraSelected
             )
+
+            // Top controller
+            // TODO: Top thumbnail on photo taken
+
+            // Bottom option controller
             Box(
-                modifier = Modifier.matchParentSize(),
+                modifier = Modifier
+                    .matchParentSize()
+                    .systemBarsPadding(),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 ButtonControllers(modifier = Modifier.padding(bottom = 15.dp)) {
@@ -210,7 +222,8 @@ fun Camera(
                             } else {
                                 isBackCameraSelected.value = true
                                 selectTextRecognition.value = false
-                                cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                                cameraController.cameraSelector =
+                                    CameraSelector.DEFAULT_BACK_CAMERA
                             }
                         },
                         painter = R.drawable.rotate_camera
