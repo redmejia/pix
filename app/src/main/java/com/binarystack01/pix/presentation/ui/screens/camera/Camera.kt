@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,8 +54,13 @@ fun Camera(
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraController = remember { LifecycleCameraController(context) }
 
+    val cameraController = remember {
+        LifecycleCameraController(context).apply {
+            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
+            bindToLifecycle(lifecycleOwner)
+        }
+    }
 
     val deniedPermission = remember { mutableStateOf(false) }
 
@@ -97,17 +101,6 @@ fun Camera(
     LaunchedEffect(permissionState) {
         if (!permissionState) {
             cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
-        }
-    }
-
-    DisposableEffect(permissionState) {
-        if (permissionState) {
-            cameraController.setEnabledUseCases(CameraController.IMAGE_CAPTURE)
-            cameraController.bindToLifecycle(lifecycleOwner)
-        }
-        onDispose {
-            Log.d("CAMERA", "Unbinding camera")
-            cameraController.unbind()
         }
     }
 
@@ -153,8 +146,10 @@ fun Camera(
                         controller = cameraController
                     }
                 },
-                modifier = Modifier
-                    .fillMaxSize()
+                onRelease = {
+                    cameraController.unbind()
+                },
+                modifier = Modifier.fillMaxSize()
             )
             BlinkAnimation(visible = visibleBlink.value)
             RecognitionBox(
