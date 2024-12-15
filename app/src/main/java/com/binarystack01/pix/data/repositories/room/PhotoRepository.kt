@@ -21,4 +21,11 @@ class PhotoRepository(private val photoDao: PhotoDao) {
         photoDao.getPhotoPath(fileName)
     }
 
+    suspend fun getThumbnailImagePath(fileName: String) = withContext(Dispatchers.IO) {
+        photoDao.getThumbnailPath(fileName)
+    }
+
+    suspend fun deleteImage(photo: Photo) = withContext(Dispatchers.IO) {
+        photoDao.deleteImage(photo)
+    }
 }

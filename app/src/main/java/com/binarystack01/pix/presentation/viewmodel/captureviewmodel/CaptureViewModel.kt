@@ -58,6 +58,15 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
         }
     }
 
+    private suspend fun readAndDeleteFile(filePath: String): Boolean {
+        val file = File(filePath)
+        if (file.exists()) {
+            file.delete()
+            return true
+        }
+        return false
+    }
+
 
     private suspend fun savePhoto(context: Context, bitmap: Bitmap, fileName: String): String {
 
@@ -96,6 +105,23 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
             val filePath = photoRepository.getImagePath(fileName)
             val photo = BitmapFactory.decodeFile(filePath)
             _photoState.value = _photoState.value.copy(photo = photo)
+        }
+    }
+
+    fun deleteImage(photo: Photo) {
+        viewModelScope.launch {
+
+            val thumbnailPath = photoRepository.getThumbnailImagePath(photo.fileName)
+            val photPath = photoRepository.getImagePath(photo.fileName)
+
+            val thumbnail = readAndDeleteFile(thumbnailPath)
+            val image = readAndDeleteFile(photPath)
+
+            if (thumbnail && image) {
+                photoRepository.deleteImage(photo)
+                Log.d("IMAGE", "deleteImage: image was deleted")
+            }
+
         }
     }
 
