@@ -14,8 +14,11 @@ interface PhotoDao {
 
     @Query("SELECT * FROM user_photos")
     fun getAllPhotos(): Flow<List<Photo>>
-
+    
     @Query("SELECT photo_path FROM user_photos WHERE file_name = :fileName")
-    suspend fun getPath(fileName: String): String
+    suspend fun getPhotoPath(fileName: String): String
+
+    @Query("SELECT thumbnail_path FROM user_photos WHERE file_name = :fileName")
+    suspend fun getThumbnailPath(fileName: String): String
 
 }

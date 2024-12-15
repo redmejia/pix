@@ -17,8 +17,8 @@ class PhotoRepository(private val photoDao: PhotoDao) {
         return photoDao.getAllPhotos()
     }
 
-    suspend fun getImage(fileName: String): String = withContext(Dispatchers.IO) {
-        photoDao.getPath(fileName)
+    suspend fun getImagePath(fileName: String): String = withContext(Dispatchers.IO) {
+        photoDao.getPhotoPath(fileName)
     }
 
 }

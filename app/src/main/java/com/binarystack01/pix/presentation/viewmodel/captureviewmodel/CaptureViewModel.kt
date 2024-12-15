@@ -93,7 +93,7 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
     fun loadPhoto(fileName: String) {
         viewModelScope.launch {
-            val filePath = photoRepository.getImage(fileName)
+            val filePath = photoRepository.getImagePath(fileName)
             val photo = BitmapFactory.decodeFile(filePath)
             _photoState.value = _photoState.value.copy(photo = photo)
         }
