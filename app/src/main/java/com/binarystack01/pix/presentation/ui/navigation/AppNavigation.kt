@@ -32,23 +32,25 @@ fun AppNavigation(
     NavHost(
         modifier = modifier,
         navController = navHostController,
-        startDestination = AppScreens.Camera.name,
+        startDestination = AppScreens.Gallery.name,
         enterTransition = {
-            slideInHorizontally(initialOffsetX = { -1000 }) + fadeIn(animationSpec = tween(500))
+            slideInHorizontally(initialOffsetX = { -1000 }) +
+                    fadeIn(animationSpec = tween(500))
         }, exitTransition = {
-            slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut(animationSpec = tween(500))
+            slideOutHorizontally(targetOffsetX = { -1000 }) +
+                    fadeOut(animationSpec = tween(500))
         }
     ) {
+        composable(route = AppScreens.Gallery.name) {
+            Gallery(captureViewModel = captureViewModel)
+        }
+
         composable(route = AppScreens.Camera.name) {
             Camera(
                 permissionsViewModel = permissionsViewModel,
                 captureViewModel = captureViewModel,
                 visionViewModel = visionViewModel
             )
-        }
-
-        composable(route = AppScreens.Gallery.name) {
-            Gallery(captureViewModel = captureViewModel)
         }
 
         composable(route = AppScreens.RecognitionList.name) {
@@ -70,4 +72,6 @@ fun AppNavigation(
 
         }
     }
+
+
 }

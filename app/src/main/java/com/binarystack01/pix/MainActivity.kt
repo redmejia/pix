@@ -27,11 +27,23 @@ import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewMo
 import com.binarystack01.pix.ui.theme.PixTheme
 import kotlinx.coroutines.flow.map
 import android.graphics.Color
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.rememberSplineBasedDecay
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.binarystack01.pix.presentation.ui.components.animation.swipe.DraggableBox
+import com.binarystack01.pix.presentation.ui.screens.camera.Camera
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -83,28 +95,96 @@ class MainActivity : ComponentActivity() {
                     keepSplashScreen = false
                 }
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    bottomBar = {
-                        val readMode by visionViewModel.visionState
-                            .map { it.readerMode }
-                            .collectAsState(initial = false)
+                val isScaffoldVisible = remember { mutableStateOf(true) }
 
-                        if (!readMode) {
-                            BottomBar(navController = navHostController)
+                Box {
+
+                    val configuration = LocalConfiguration.current
+                    val screenWidth = configuration.screenWidthDp.toFloat()
+
+                    // main scaffold animation
+                    val translationX = remember { Animatable(0f) }
+                    translationX.updateBounds(0f)
+
+                    val coroutine = rememberCoroutineScope()
+
+                    val draggableState = rememberDraggableState(onDelta = { dragAmount ->
+                        coroutine.launch {
+                            translationX.snapTo(translationX.value + dragAmount)
                         }
-                    },
-                    contentWindowInsets = WindowInsets(0.dp)
-                ) { innerPadding ->
-                    AppNavigation(
-                        modifier = Modifier.padding(innerPadding),
-                        navHostController = navHostController,
-                        captureViewModel = captureViewModel,
-                        visionViewModel = visionViewModel,
-                        permissionsViewModel = permissionsViewModel
-                    )
+                    })
+
+
+                    val cameraTranslationX = remember { Animatable(0f) }
+                    cameraTranslationX.updateBounds(0f)
+
+
+                    val decay = rememberSplineBasedDecay<Float>()
+
+
+                    DraggableBox(
+                        modifier = Modifier
+                            .graphicsLayer {
+                                this.translationX = cameraTranslationX.value
+                            },
+                        coroutine = coroutine,
+                        translationX = translationX,
+                        draggableState = draggableState,
+                        screenWidth = screenWidth,
+                        decay = decay,
+                        visibleContent = isScaffoldVisible,
+                        onDragThreshold = 0.5f
+
+                    ) {
+                        Camera(
+                            permissionsViewModel = permissionsViewModel,
+                            captureViewModel = captureViewModel,
+                            visionViewModel = visionViewModel
+                        )
+                    }
+
+
+                    DraggableBox(
+                        modifier = Modifier
+                            .graphicsLayer {
+                                this.translationX = translationX.value
+                            },
+                        coroutine = coroutine,
+                        translationX = translationX,
+                        draggableState = draggableState,
+                        screenWidth = screenWidth,
+                        decay = decay,
+                        visibleContent = isScaffoldVisible,
+                        onDragThreshold = 0.5f
+
+                    ) {
+                        if (isScaffoldVisible.value) {
+                            Scaffold(
+                                modifier = Modifier.fillMaxSize(),
+                                bottomBar = {
+                                    val readMode by visionViewModel.visionState
+                                        .map { it.readerMode }
+                                        .collectAsState(initial = false)
+
+                                    if (!readMode) {
+                                        BottomBar(navController = navHostController)
+                                    }
+                                },
+                                contentWindowInsets = WindowInsets(0.dp)
+                            ) { innerPadding ->
+                                AppNavigation(
+                                    modifier = Modifier.padding(innerPadding),
+                                    navHostController = navHostController,
+                                    captureViewModel = captureViewModel,
+                                    visionViewModel = visionViewModel,
+                                    permissionsViewModel = permissionsViewModel
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
+

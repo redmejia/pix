@@ -14,8 +14,8 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,7 +45,6 @@ import com.binarystack01.pix.ui.theme.BluePrimary50
 import com.binarystack01.pix.ui.theme.GrayNeutral
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun Camera(
     permissionsViewModel: PermissionsViewModel,
@@ -55,8 +54,13 @@ fun Camera(
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraController = remember { LifecycleCameraController(context) }
 
+    val cameraController = remember {
+        LifecycleCameraController(context).apply {
+            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
+            bindToLifecycle(lifecycleOwner)
+        }
+    }
 
     val deniedPermission = remember { mutableStateOf(false) }
 
@@ -100,17 +104,6 @@ fun Camera(
         }
     }
 
-    DisposableEffect(permissionState) {
-        if (permissionState) {
-            cameraController.setEnabledUseCases(CameraController.IMAGE_CAPTURE)
-            cameraController.bindToLifecycle(lifecycleOwner)
-        }
-        onDispose {
-            Log.d("CAMERA", "Unbinding camera")
-            cameraController.unbind()
-        }
-    }
-
     LaunchedEffect(visibleBlink.value) {
         if (visibleBlink.value) {
             delay(200)
@@ -118,7 +111,11 @@ fun Camera(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+    ) {
+
         // USER denied permission WARNING message OPEN SETTING to grant permission
         if (deniedPermission.value) {
             Educational(
@@ -149,6 +146,9 @@ fun Camera(
                         controller = cameraController
                     }
                 },
+                onRelease = {
+                    cameraController.unbind()
+                },
                 modifier = Modifier.fillMaxSize()
             )
             BlinkAnimation(visible = visibleBlink.value)
@@ -160,8 +160,15 @@ fun Camera(
                 detectedText = detectedText,
                 isBackCameraSelected = isBackCameraSelected
             )
+
+            // Top controller
+            // TODO: Top thumbnail on photo taken
+
+            // Bottom option controller
             Box(
-                modifier = Modifier.matchParentSize(),
+                modifier = Modifier
+                    .matchParentSize()
+                    .systemBarsPadding(),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 ButtonControllers(modifier = Modifier.padding(bottom = 15.dp)) {
@@ -210,7 +217,8 @@ fun Camera(
                             } else {
                                 isBackCameraSelected.value = true
                                 selectTextRecognition.value = false
-                                cameraController.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                                cameraController.cameraSelector =
+                                    CameraSelector.DEFAULT_BACK_CAMERA
                             }
                         },
                         painter = R.drawable.rotate_camera

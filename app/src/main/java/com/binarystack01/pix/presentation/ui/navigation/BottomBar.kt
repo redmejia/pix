@@ -5,12 +5,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -25,7 +23,7 @@ fun BottomBar(
 ) {
 
     val items = listOf(
-        BottomBarItem.Camera,
+        //  BottomBarItem.Camera,
         BottomBarItem.Gallery,
         BottomBarItem.List // RecognitionList Screen
     )
@@ -56,7 +54,7 @@ fun BottomBar(
                 },
                 icon = {
                     Icon(
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier.size(35.dp),
                         painter = painterResource(
                             id = if (currentRoute == screen.route)
                                 screen.selected else screen.unselected
@@ -64,14 +62,6 @@ fun BottomBar(
                         tint = if (currentRoute == screen.route)
                             selectedColor else unselectedColor,
                         contentDescription = screen.title
-                    )
-                },
-                label = {
-                    Text(
-                        text = screen.title,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (currentRoute == screen.route)
-                            selectedColor else unselectedColor,
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
