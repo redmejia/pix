@@ -6,9 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,8 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.binarystack01.pix.presentation.ui.components.actionbuttons.ActionButton
 import com.binarystack01.pix.presentation.ui.screens.gallery.photoviewer.PhotoViewer
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
+import com.binarystack01.pix.ui.theme.BlackPrimary95
+import com.binarystack01.pix.ui.theme.WhitePrimary0
 import java.io.File
 
 @Composable
@@ -44,7 +53,7 @@ fun Gallery(
     Surface {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             if (photoState.photos.isEmpty()) {
                 Column(
@@ -63,16 +72,38 @@ fun Gallery(
                         horizontalArrangement = Arrangement.spacedBy(2.dp),
                         content = {
                             items(photoState.photos) { photo ->
-                                AsyncImage(
-                                    modifier = Modifier.clickable {
-                                        selectPhotoId.value = photo.fileName
-                                    },
-                                    model = File(photo.thumbnailPath),
-                                    contentDescription = null
-                                )
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.BottomCenter
+                                ) {
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clickable {
+                                                selectPhotoId.value = photo.fileName
+                                            },
+                                        model = File(photo.thumbnailPath),
+                                        contentDescription = null
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(horizontal = 3.dp)
+                                            .fillMaxSize(),
+                                        contentAlignment = Alignment.BottomEnd
+                                    ) {
+                                        ActionButton(
+                                            onClick = {
+                                                captureViewModel.deleteImage(photo = photo)
+                                            },
+                                            imageIconVector = Icons.Default.Delete
+                                        )
+                                    }
+                                }
                             }
                         },
                     )
+
                     photoState.photo?.let { photo ->
                         PhotoViewer(
                             captureViewModel = captureViewModel,

@@ -32,7 +32,12 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
     private val WIDTH = 400
     private val HEIGHT = 400
-    private val DIRECTORY_NAME = "photos"
+
+    // Original size photo directory
+    private val PHOTO_DIRECTORY_NAME = "photos"
+
+    // Thumbnail photo directory
+    private val THUMBNAIL_DIRECTORY_NAME = "thumbnails"
     private val IMAGE_FORMAT = "jpg"
 
     private fun generateUUID(): String = UUID.randomUUID().toString()
@@ -70,7 +75,7 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
     private suspend fun savePhoto(context: Context, bitmap: Bitmap, fileName: String): String {
 
-        val photsDir = File(context.filesDir, DIRECTORY_NAME)
+        val photsDir = File(context.filesDir, PHOTO_DIRECTORY_NAME)
 
         if (!photsDir.exists()) {
             photsDir.mkdir()
@@ -85,7 +90,7 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
     private suspend fun saveThumbnail(context: Context, bitmap: Bitmap, fileName: String): String {
 
-        val thumbnailDir = File(context.filesDir, "thumbnails")
+        val thumbnailDir = File(context.filesDir, THUMBNAIL_DIRECTORY_NAME)
 
         if (!thumbnailDir.exists()) {
             thumbnailDir.mkdir()
@@ -114,10 +119,11 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
             val thumbnailPath = photoRepository.getThumbnailImagePath(photo.fileName)
             val photPath = photoRepository.getImagePath(photo.fileName)
 
-            val thumbnail = readAndDeleteFile(thumbnailPath)
-            val image = readAndDeleteFile(photPath)
+            // Delete items from photo and thumbnail directories
+            val isThumbnailDeleted = readAndDeleteFile(thumbnailPath)
+            val isPhotoDeleted = readAndDeleteFile(photPath)
 
-            if (thumbnail && image) {
+            if (isThumbnailDeleted && isPhotoDeleted) {
                 photoRepository.deleteImage(photo)
                 Log.d("IMAGE", "deleteImage: image was deleted")
             }
