@@ -67,44 +67,55 @@ fun MyList(
 
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = WhitePrimary0),
-        contentPadding = WindowInsets.statusBars.asPaddingValues(), // Respect system bars insets
-        verticalArrangement = Arrangement.spacedBy(space = 14.dp, alignment = Alignment.Top)
-    ) {
-        item { Spacer(modifier = Modifier.height(4.dp)) }
+    if (textRecords.data.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // TODO: Add an icon or text when text record list is empty
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = WhitePrimary0),
+            contentPadding = WindowInsets.statusBars.asPaddingValues(), // Respect system bars insets
+            verticalArrangement = Arrangement.spacedBy(space = 14.dp, alignment = Alignment.Top)
+        ) {
+            item { Spacer(modifier = Modifier.height(4.dp)) }
 
-        items(textRecords.data) { data ->
-            ArticleCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                onClick = {
-                    visionViewModel.changeMode {
-                        navController.navigate(route = AppScreens.Reader.name + "/${data.id}")
-                    }
-                },
-                header = { Header(data.title, createdAt = data.createdAt) },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_article),
-                        contentDescription = "article",
-                        tint = BlueSecondary60
-                    )
-                }
-            ) {
-                Column {
-                    Text(buildAnnotatedString {
-                        withStyle(style = SpanStyle()) {
-                            append(data.text.replace("\n", " ".trim()))
-                            append("...")
+            items(textRecords.data) { data ->
+                ArticleCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    onClick = {
+                        visionViewModel.changeMode {
+                            navController.navigate(route = AppScreens.Reader.name + "/${data.id}")
                         }
-                    })
+                    },
+                    header = { Header(data.title, createdAt = data.createdAt) },
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.outline_article),
+                            contentDescription = "article",
+                            tint = BlueSecondary60
+                        )
+                    }
+                ) {
+                    Column {
+                        Text(buildAnnotatedString {
+                            withStyle(style = SpanStyle()) {
+                                append(data.text.replace("\n", " ".trim()))
+                                append("...")
+                            }
+                        })
+                    }
                 }
             }
+            item { Spacer(modifier = Modifier.height(4.dp)) }
         }
-        item { Spacer(modifier = Modifier.height(4.dp)) }
     }
+
 }

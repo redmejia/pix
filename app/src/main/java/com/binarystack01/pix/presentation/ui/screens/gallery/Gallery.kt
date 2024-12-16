@@ -65,7 +65,7 @@ fun Gallery(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "No Photo.")
+                    // TODO: Add an icon or text when gallery list is empty 
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
