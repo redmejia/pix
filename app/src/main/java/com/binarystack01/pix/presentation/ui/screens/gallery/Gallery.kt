@@ -1,19 +1,20 @@
 package com.binarystack01.pix.presentation.ui.screens.gallery
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,12 +26,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.binarystack01.pix.presentation.ui.components.actionbuttons.ActionButton
 import com.binarystack01.pix.presentation.ui.screens.gallery.photoviewer.PhotoViewer
 import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureViewModel
 import com.binarystack01.pix.ui.theme.BlackPrimary95
+import com.binarystack01.pix.ui.theme.BlueSecondary60
 import com.binarystack01.pix.ui.theme.WhitePrimary0
 import java.io.File
 
@@ -88,16 +92,32 @@ fun Gallery(
 
                                     Box(
                                         modifier = Modifier
+                                            .background(color = BlackPrimary95)
                                             .padding(horizontal = 3.dp)
                                             .fillMaxSize(),
-                                        contentAlignment = Alignment.BottomEnd
+                                        contentAlignment = Alignment.Center
                                     ) {
-                                        ActionButton(
-                                            onClick = {
-                                                captureViewModel.deleteImage(photo = photo)
-                                            },
-                                            imageIconVector = Icons.Default.Delete
-                                        )
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = photo.createdAt,
+                                                fontSize = 8.sp,
+                                                color = BlueSecondary60,
+                                                fontWeight = FontWeight.ExtraBold
+                                            )
+                                            ActionButton(
+                                                colors = IconButtonDefaults.iconButtonColors(
+                                                    contentColor = WhitePrimary0
+                                                ),
+                                                onClick = {
+                                                    captureViewModel.deleteImage(photo = photo)
+                                                },
+                                                imageIconVector = Icons.Default.Delete
+                                            )
+                                        }
                                     }
                                 }
                             }

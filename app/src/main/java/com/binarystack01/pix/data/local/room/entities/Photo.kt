@@ -14,4 +14,6 @@ data class Photo(
     val thumbnailPath: String = "",
     @ColumnInfo(name = "photo_path")
     val path: String = "",
+    @ColumnInfo(name = "created_at")
+    val createdAt: String = "",
 )

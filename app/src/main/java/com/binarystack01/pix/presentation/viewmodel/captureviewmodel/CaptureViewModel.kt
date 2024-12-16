@@ -13,6 +13,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.binarystack01.pix.data.local.room.entities.Photo
 import com.binarystack01.pix.data.repositories.room.PhotoRepository
+import com.binarystack01.pix.domain.usecases.time.Time
+import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
+import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel.Companion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,18 +33,6 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
     val photoState: StateFlow<PhotoState> = _photoState.asStateFlow()
 
 
-    private val WIDTH = 400
-    private val HEIGHT = 400
-
-    // Original size photo directory
-    private val PHOTO_DIRECTORY_NAME = "photos"
-
-    // Thumbnail photo directory
-    private val THUMBNAIL_DIRECTORY_NAME = "thumbnails"
-    private val IMAGE_FORMAT = "jpg"
-
-    private fun generateUUID(): String = UUID.randomUUID().toString()
-
     init {
         viewModelScope.launch {
             photoRepository.getAllPhotos().collect { photos ->
@@ -54,6 +45,25 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
             }
         }
     }
+
+
+    val time = Time()
+
+    private val WIDTH = 400
+    private val HEIGHT = 400
+
+    // Original size photo directory
+    private val PHOTO_DIRECTORY_NAME = "photos"
+
+    // Thumbnail photo directory
+    private val THUMBNAIL_DIRECTORY_NAME = "thumbnails"
+    private val IMAGE_FORMAT = "jpg"
+
+    private val TIME_FORMAT = "MMM dd, yyyy HH:mm a"
+
+    private fun generateUUID(): String = UUID.randomUUID().toString()
+    private fun timeNow(): String = time.timeFormater(format = TIME_FORMAT)
+
 
     private suspend fun writeAndSave(file: File, bitmap: Bitmap) {
         withContext(Dispatchers.IO) {
@@ -125,7 +135,6 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
 
             if (isThumbnailDeleted && isPhotoDeleted) {
                 photoRepository.deleteImage(photo)
-                Log.d("IMAGE", "deleteImage: image was deleted")
             }
 
         }
@@ -151,6 +160,7 @@ class CaptureViewModel(private val photoRepository: PhotoRepository) : ViewModel
                                 fileName = "${photoId}",
                                 thumbnailPath = thumbnailPath,
                                 path = photoPath,
+                                createdAt = timeNow()
                             )
                         )
                         image.close()
