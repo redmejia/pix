@@ -1,6 +1,7 @@
 package com.binarystack01.pix.data.local.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,6 +17,12 @@ interface PhotoDao {
     fun getAllPhotos(): Flow<List<Photo>>
 
     @Query("SELECT photo_path FROM user_photos WHERE file_name = :fileName")
-    suspend fun getPath(fileName: String): String
+    suspend fun getPhotoPath(fileName: String): String
+
+    @Query("SELECT thumbnail_path FROM user_photos WHERE file_name = :fileName")
+    suspend fun getThumbnailPath(fileName: String): String
+
+    @Delete
+    suspend fun deleteImage(photo: Photo)
 
 }
