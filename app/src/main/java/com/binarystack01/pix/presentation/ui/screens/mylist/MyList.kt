@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -73,7 +74,13 @@ fun MyList(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // TODO: Add an icon or text when text record list is empty
+            Icon(
+                modifier = Modifier
+                    .size(50.dp),
+                painter = painterResource(R.drawable.outline_library_text),
+                contentDescription = "",
+                tint = BlueSecondary60
+            )
         }
     } else {
         LazyColumn(

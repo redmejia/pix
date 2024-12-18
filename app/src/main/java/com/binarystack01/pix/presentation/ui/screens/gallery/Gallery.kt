@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +39,7 @@ import com.binarystack01.pix.presentation.viewmodel.captureviewmodel.CaptureView
 import com.binarystack01.pix.ui.theme.BlackPrimary95
 import com.binarystack01.pix.ui.theme.BlueSecondary60
 import com.binarystack01.pix.ui.theme.WhitePrimary0
+import com.binarystack01.pix.R
 import java.io.File
 
 @Composable
@@ -65,7 +69,13 @@ fun Gallery(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // TODO: Add an icon or text when gallery list is empty 
+                    Icon(
+                        modifier = Modifier
+                            .size(50.dp),
+                        painter = painterResource(R.drawable.outline_photo),
+                        contentDescription = "",
+                        tint = BlueSecondary60
+                    )
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
