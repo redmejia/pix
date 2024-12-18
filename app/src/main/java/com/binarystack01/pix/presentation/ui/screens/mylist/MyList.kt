@@ -1,8 +1,13 @@
 package com.binarystack01.pix.presentation.ui.screens.mylist
 
 import android.app.Activity
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,8 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -36,10 +46,12 @@ import androidx.navigation.NavHostController
 import com.binarystack01.pix.presentation.ui.navigation.AppScreens
 import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
 import com.binarystack01.pix.R
+import com.binarystack01.pix.presentation.ui.components.card.Card
 import com.binarystack01.pix.presentation.ui.screens.mylist.articlecard.ArticleCard
 import com.binarystack01.pix.presentation.ui.screens.mylist.articlecard.Header
 import com.binarystack01.pix.ui.theme.BlueSecondary60
 import com.binarystack01.pix.ui.theme.WhitePrimary0
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyList(
@@ -83,6 +95,20 @@ fun MyList(
             )
         }
     } else {
+
+        val configuration = LocalConfiguration.current
+        val screenWidth = configuration.screenWidthDp.toFloat()
+
+        val translationX = remember { Animatable(0f) }
+        translationX.updateBounds(0f, screenWidth / 2f)
+
+        val coroutine = rememberCoroutineScope()
+        val draggableState = rememberDraggableState(onDelta = { dragAmount ->
+            coroutine.launch {
+                translationX.snapTo(translationX.value + dragAmount)
+            }
+        })
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -93,36 +119,55 @@ fun MyList(
             item { Spacer(modifier = Modifier.height(4.dp)) }
 
             items(textRecords.data) { data ->
-                ArticleCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    onClick = {
-                        visionViewModel.changeMode {
-                            navController.navigate(route = AppScreens.Reader.name + "/${data.id}")
-                        }
-                    },
-                    header = { Header(data.title, createdAt = data.createdAt) },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.outline_article),
-                            contentDescription = "article",
-                            tint = BlueSecondary60
-                        )
-                    }
-                ) {
-                    Column {
-                        Text(buildAnnotatedString {
-                            withStyle(style = SpanStyle()) {
-                                append(data.text.replace("\n", " ".trim()))
-                                append("...")
+                Box {
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth()
+                    ) {
+                        ArticleCard(
+                            modifier = Modifier
+                                .graphicsLayer {
+                                    this.translationX = translationX.value
+                                }
+                                .draggable(
+                                    state = draggableState,
+                                    orientation = Orientation.Horizontal
+                                )
+                                .fillMaxWidth(),
+//                                .padding(horizontal = 8.dp),
+                            onClick = {
+                                visionViewModel.changeMode {
+                                    navController.navigate(route = AppScreens.Reader.name + "/${data.id}")
+                                }
+                            },
+                            header = { Header(data.title, createdAt = data.createdAt) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.outline_article),
+                                    contentDescription = "article",
+                                    tint = BlueSecondary60
+                                )
                             }
-                        })
+                        ) {
+                            Column {
+                                Text(buildAnnotatedString {
+                                    withStyle(style = SpanStyle()) {
+                                        append(data.text.replace("\n", " ".trim()))
+                                        append("...")
+                                    }
+                                })
+                            }
+                        }
                     }
+
                 }
+
+
             }
             item { Spacer(modifier = Modifier.height(4.dp)) }
         }
     }
 
 }
+
