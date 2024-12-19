@@ -1,9 +1,10 @@
 package com.binarystack01.pix.presentation.ui.screens.mylist.swipe
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,42 +31,47 @@ import com.binarystack01.pix.ui.theme.WhitePrimary0
 
 @Composable
 fun SwipeToDelete(
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
     deleteWidthIconSize: Float = 0.20f,
-    deleteBackgroundColor: Color = Color.Red,
+    deleteBackgroundColor: Color = Color.Transparent,
     deleteIcon: @Composable () -> Unit = {},
     text: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit = {},
 ) {
 
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
 
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.CenterStart
+    ) {
         Card(
             color = deleteBackgroundColor,
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                    .clickable { onClick() }
+                    .fillMaxWidth(deleteWidthIconSize)
+                    .padding(
+                        vertical = 4.dp,
+                        horizontal = 4.dp
+                    ), // Same padding Row wrapper ArticleCard composable
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(deleteWidthIconSize)
-                        .padding(
-                            vertical = 4.dp,
-                            horizontal = 4.dp
-                        ), // Same padding Row wrapper ArticleCard composable
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    deleteIcon()
-                    text()
-                }
-                content()
+                deleteIcon()
+                text()
             }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
+        ) {
+            content()
         }
     }
 }
@@ -80,6 +86,7 @@ fun SwipeToDeletePreview() {
         verticalArrangement = Arrangement.Center,
     ) {
         SwipeToDelete(
+            deleteBackgroundColor = Color.Red,
             deleteIcon = {
                 Icon(
                     imageVector = Icons.Default.Delete,

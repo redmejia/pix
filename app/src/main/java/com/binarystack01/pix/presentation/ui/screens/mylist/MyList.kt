@@ -1,7 +1,10 @@
 package com.binarystack01.pix.presentation.ui.screens.mylist
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.calculateTargetValue
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -20,6 +23,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,9 +51,9 @@ import androidx.navigation.NavHostController
 import com.binarystack01.pix.presentation.ui.navigation.AppScreens
 import com.binarystack01.pix.presentation.viewmodel.visionviewmodel.VisionViewModel
 import com.binarystack01.pix.R
-import com.binarystack01.pix.presentation.ui.components.card.Card
 import com.binarystack01.pix.presentation.ui.screens.mylist.articlecard.ArticleCard
 import com.binarystack01.pix.presentation.ui.screens.mylist.articlecard.Header
+import com.binarystack01.pix.presentation.ui.screens.mylist.swipe.SwipeToDelete
 import com.binarystack01.pix.ui.theme.BlueSecondary60
 import com.binarystack01.pix.ui.theme.WhitePrimary0
 import kotlinx.coroutines.launch
@@ -99,15 +104,7 @@ fun MyList(
         val configuration = LocalConfiguration.current
         val screenWidth = configuration.screenWidthDp.toFloat()
 
-        val translationX = remember { Animatable(0f) }
-        translationX.updateBounds(0f, screenWidth / 2f)
 
-        val coroutine = rememberCoroutineScope()
-        val draggableState = rememberDraggableState(onDelta = { dragAmount ->
-            coroutine.launch {
-                translationX.snapTo(translationX.value + dragAmount)
-            }
-        })
 
         LazyColumn(
             modifier = Modifier
@@ -118,12 +115,41 @@ fun MyList(
         ) {
             item { Spacer(modifier = Modifier.height(4.dp)) }
 
-            items(textRecords.data) { data ->
+            items(
+                textRecords.data,
+                key = { it.id!!.toLong() }
+            ) { data ->
+
+                val translationX = remember { Animatable(0f) }
+                translationX.updateBounds(0f, screenWidth / 3f)
+
+                val coroutine = rememberCoroutineScope()
+                val draggableState = rememberDraggableState(onDelta = { dragAmount ->
+                    coroutine.launch {
+                        translationX.snapTo(translationX.value + dragAmount)
+                    }
+                })
+
+                val decay = rememberSplineBasedDecay<Float>()
+
                 Box {
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .fillMaxWidth()
+                    SwipeToDelete(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        onClick = { Log.d("CLICKED", "MyList: ${data.id}") },
+                        deleteBackgroundColor = Color.Red,
+                        deleteIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "",
+                                tint = WhitePrimary0
+                            )
+                        },
+                        text = {
+                            Text(
+                                "Delete",
+                                color = WhitePrimary0,
+                            )
+                        }
                     ) {
                         ArticleCard(
                             modifier = Modifier
@@ -132,10 +158,39 @@ fun MyList(
                                 }
                                 .draggable(
                                     state = draggableState,
-                                    orientation = Orientation.Horizontal
+                                    orientation = Orientation.Horizontal,
+                                    onDragStopped = { velocity ->
+
+                                        val decayX = decay.calculateTargetValue(
+                                            translationX.value,
+                                            velocity
+                                        )
+
+                                        val targetX = if (decayX > screenWidth / 2f) {
+                                            screenWidth
+                                        } else {
+                                            0f
+                                        }
+
+                                        val reachTargetWithDecay =
+                                            (decayX > targetX && targetX == screenWidth) ||
+                                                    (decayX < targetX && targetX == 0f)
+
+                                        if (reachTargetWithDecay) {
+                                            translationX.animateDecay(
+                                                initialVelocity = velocity,
+                                                animationSpec = decay
+                                            )
+                                        } else {
+                                            translationX.animateTo(
+                                                targetValue = targetX,
+                                                initialVelocity = velocity
+                                            )
+                                        }
+                                        
+                                    }
                                 )
                                 .fillMaxWidth(),
-//                                .padding(horizontal = 8.dp),
                             onClick = {
                                 visionViewModel.changeMode {
                                     navController.navigate(route = AppScreens.Reader.name + "/${data.id}")
@@ -162,12 +217,9 @@ fun MyList(
                     }
 
                 }
-
-
             }
             item { Spacer(modifier = Modifier.height(4.dp)) }
         }
     }
-
 }
 
