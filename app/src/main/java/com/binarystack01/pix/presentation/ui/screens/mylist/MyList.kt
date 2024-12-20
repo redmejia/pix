@@ -135,7 +135,10 @@ fun MyList(
                 Box {
                     SwipeToDelete(
                         modifier = Modifier.padding(horizontal = 8.dp),
-                        onClick = { Log.d("CLICKED", "MyList: ${data.id}") },
+                        onClick = {
+                            Log.d("CLICKED", "MyList: ${data.id}")
+                            visionViewModel.deleteVisionTextRecord(vision = data)
+                        },
                         deleteBackgroundColor = Color.Red,
                         deleteIcon = {
                             Icon(
@@ -187,7 +190,7 @@ fun MyList(
                                                 initialVelocity = velocity
                                             )
                                         }
-                                        
+
                                     }
                                 )
                                 .fillMaxWidth(),
@@ -196,7 +199,13 @@ fun MyList(
                                     navController.navigate(route = AppScreens.Reader.name + "/${data.id}")
                                 }
                             },
-                            header = { Header(data.title, createdAt = data.createdAt) },
+                            header = {
+                                Header(
+                                    if (data.title.length == 15) "${data.title.trim()}..."
+                                    else data.title.trim(),
+                                    createdAt = data.createdAt
+                                )
+                            },
                             leadingIcon = {
                                 Icon(
                                     painter = painterResource(R.drawable.outline_article),
