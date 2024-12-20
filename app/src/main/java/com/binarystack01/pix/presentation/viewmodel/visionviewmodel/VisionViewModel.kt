@@ -51,6 +51,12 @@ class VisionViewModel(private val visionRepository: VisionRepository) : ViewMode
         }
     }
 
+    fun deleteVisionTextRecord(vision: Vision) {
+        viewModelScope.launch {
+            visionRepository.delete(vision)
+        }
+    }
+
     fun changeMode(navigation: () -> Unit) {
         _visionState.update { currentState ->
             currentState.copy(readerMode = true)
